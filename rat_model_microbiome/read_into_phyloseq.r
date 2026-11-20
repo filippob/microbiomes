@@ -1,11 +1,15 @@
 
+library("tools")
 library("phyloseq")
 library("metagenomeSeq")
 
+##### PARAMETERS ##############################################
 basefolder = "/home/filippo/Documents/cremonesi/tunisian_rats/"
 otuf = "colitis/otu_table_filtered/otu_table_filtered-138.biom"
 metadataf = "microbiomes/rat_model_microbiome/Config/mapping_file_colitis.xlsx"
 sample_prefix = "sample"
+outdir = "colitis/Analysis/"
+###############################################################
 
 writeLines(" - reading the filtered (OTU-wise) biom file into phyloseq")
 fname = file.path(basefolder, otuf)
@@ -50,6 +54,8 @@ sample_data(otu_tax_sample) |> head()
 sample_data(otu_tax_sample) |> nrow()
 
 ## save phyloseq object
-fname = "phyloseq.RData"
+fname = file.path(basefolder, outdir, "phyloseq.RData")
 save(otu_tax_sample, file = fname)
+
+print(paste("Annotated OTU table and metadata saved to", fname))
 
