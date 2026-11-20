@@ -1,6 +1,7 @@
 
 library("tools")
 library("phyloseq")
+library("data.table")
 library("metagenomeSeq")
 
 ##### PARAMETERS ##############################################
