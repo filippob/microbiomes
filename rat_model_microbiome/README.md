@@ -6,5 +6,5 @@ Repository for code, workflow and metadata related to two projects on the gut mi
 
 ### Workflow
 
-1. `read_into_phyloseq.r`
+1. `read_into_phyloseq.r` ([here](scripts/1.read_into_phyloseq.r))
 2. 
