@@ -2,8 +2,13 @@
 library("phyloseq")
 library("metagenomeSeq")
 
+basefolder = "/home/filippo/Documents/cremonesi/tunisian_rats/"
+otuf = "colitis/otu_table_filtered/otu_table_filtered-138.biom"
+metadataf = "microbiomes/rat_model_microbiome/Config/mapping_file_colitis.xlsx"
+sample_prefix = "sample"
+
 writeLines(" - reading the filtered (OTU-wise) biom file into phyloseq")
-fname = "otu_table_filtered-138.biom"
+fname = file.path(basefolder, otuf)
 biom_otu_tax <- phyloseq::import_biom(BIOMfilename = fname)
 
 otu = otu_table(biom_otu_tax, taxa_are_rows = TRUE)
@@ -16,14 +21,21 @@ biom_otu_tax = prune_samples(sample_sums(biom_otu_tax) >= 10, biom_otu_tax)
 otu = otu_table(biom_otu_tax, taxa_are_rows = TRUE)
 ncol(otu) ## n. col (samples) AFTER filtering
 
+colnames(otu) <- paste(sample_prefix,colnames(otu),sep="-")
+print(head(otu))
+
 taxa = tax_table(biom_otu_tax)
 
 writeLines(" - reading the metadata")
-fname = "mapping_file_colitis.csv"
-metadata = fread(fname, header = TRUE)
+fname = file.path(basefolder, metadataf)
+if (file_ext(fname) == "xlsx") {
+  
+  metadata = readxl::read_xlsx(fname, sheet = 1, col_names = TRUE)
+} else metadata = fread(fname, header = TRUE)
 
 names(metadata)[1] <- "sample-id"
 metadata <- as.data.frame(metadata)
+metadata$`sample-id` = paste(sample_prefix, metadata$`sample-id`, sep="-") 
 row.names(metadata) <- metadata$`sample-id`
 metadata$`sample-id` <- NULL
 metadata$treatment = as.factor(metadata$treatment)
