@@ -6,5 +6,6 @@ Repository for code, workflow and metadata related to two projects on the gut mi
 
 ### Workflow
 
-1. `read_into_phyloseq.r` ([here](scripts/1.read_into_phyloseq.r))
-2. 
+1. `read_into_phyloseq.r` ([here](scripts/1.read_into_phyloseq.r)) $\rightarrow$ `phyloseq.RData`
+2. `calculate_alpha_diversity_indices.r` ([here](scripts/2.calculate_alpha_diversity_indices.r)) $\rightarrow$ `alpha.csv`
+3. 
