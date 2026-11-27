@@ -19,6 +19,7 @@ metadataf = "microbiomes/rat_model_microbiome/Config/mapping_file_colitis.xlsx"
 alphaf = "colitis/Analysis/alpha.csv"
 sample_prefix = "sample"
 outdir = "colitis/Analysis/"
+contrast_variable = "treatment"
 base_treatment = "Normal"
 ###############################################################
 
@@ -169,15 +170,15 @@ fname = file.path(basefolder, outdir, "figures/alpha_comparisons.png")
 ggsave(filename = fname, plot = g, device = "png", width = 8, height = 5, dpi = 200)
 
 ########################################
-## MANUALLY SET THE X VARIABLE IN AOV()
+## CHECK THE X VARIABLE IN AOV()
 ########################################
-mod = as.formula(paste("value ~", paste("treatment", collapse="+")))
+mod = as.formula(paste("value ~", paste(contrast_variable, collapse="+")))
 
 contrasts <- malpha |>
   nest(data = -c(metric)) |>
   mutate(
     fit = map(data, ~ aov(mod, data = .x)),
-    hsd = map(fit, ~ TukeyHSD(.x, which = "treatment")),
+    hsd = map(fit, ~ TukeyHSD(.x, which = contrast_variable)),
     tidied = map(hsd, tidy)
   ) |>
   unnest(tidied) |>
