@@ -10,3 +10,4 @@ Repository for code, workflow and metadata related to two projects on the gut mi
 2. `calculate_alpha_diversity_indices.r` ([here](scripts/2.calculate_alpha_diversity_indices.r)): `phyloseq.RData` $\rightarrow$ `alpha.csv`
 3. EDA (exploratory data analysis): TODO
 4. `alpha_comparison.r` ([here](scripts/4.alpha_comparison.r)): metadata + alpha indices $\rightarrow$ significance of comparisons (tables and plots)
+5. `calculate_beta_diversity.r` ([here](scripts/5.calculate_beta_diversity.r)):  `phyloseq.RData` $\rightarrow$ `bray_curtis_distances.csv` 
