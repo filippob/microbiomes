@@ -1,4 +1,5 @@
 
+library("purrr")
 library("dplyr")
 library("tidyr")
 library("tools")
@@ -166,3 +167,43 @@ w1 <- w1 + geom_label_repel(data = subset(D, p.value < 0.05),
 g <- ggarrange(w,w1, ncol = 2, widths = c(2,3))
 fname = file.path(basefolder, outdir, "figures/alpha_comparisons.png")
 ggsave(filename = fname, plot = g, device = "png", width = 8, height = 5, dpi = 200)
+
+########################################
+## MANUALLY SET THE X VARIABLE IN AOV()
+########################################
+mod = as.formula(paste("value ~", paste("treatment", collapse="+")))
+
+contrasts <- malpha |>
+  nest(data = -c(metric)) |>
+  mutate(
+    fit = map(data, ~ aov(mod, data = .x)),
+    hsd = map(fit, ~ TukeyHSD(.x, which = "treatment")),
+    tidied = map(hsd, tidy)
+  ) |>
+  unnest(tidied) |>
+  select(-c(data,fit,hsd))
+
+fname = paste("alpha_contrasts_", ".csv", sep="")
+fname = file.path(basefolder, outdir, "tables", fname)
+fwrite(contrasts, file = fname)
+
+colors = c("red","white")
+tmp <- contrasts |>
+  filter(!is.na(adj.p.value)) |>
+  select(metric, contrast, adj.p.value) |>
+  mutate(pvalue = ifelse(adj.p.value <= 0.05, "<= 0.05", "> 0.05")) |>
+  select(-adj.p.value)
+
+gg <- ggplot(tmp, aes(x = contrast, y = metric)) + geom_tile(aes(fill=pvalue), color = "white") + 
+  scale_fill_manual(values=colors) + 
+  theme(axis.text.x = element_text(angle=90, size = 6),
+        legend.key = element_rect(color="black"),
+        panel.background = element_rect(fill = 'white', color = 'white'),
+        panel.grid.major = element_line(color = 'white'),
+        panel.grid.minor = element_line(color = 'white'))
+
+fname = paste("alpha_contrasts_significant_", ".png", sep="")
+fname = file.path(basefolder, outdir, "figures", fname)
+ggsave(filename = fname, plot = gg, device = "png")
+
+
